@@ -200,6 +200,6 @@ alias ll='\ls -alh'
 alias vi=vim
 alias v-='vim -'
 alias c-='cd $OLDPWD'
-
+alias ls='\ls --color=auto'
 anyjobs() { [[ "$1" != 0 ]] && echo "$1"; } # https://unix.stackexchange.com/a/446149/202329
 PS1='\e[1;34m$(pp="$PWD/" q=${pp/#"$HOME/"/} p=${q%?};((${#p}>19))&&echo "${p::9}…${p:(-9)}"||echo "$p") \A $(anyjobs \j)\$ \e[m' # none if $HOME, ${t%?} to remove last char of string .

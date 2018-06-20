@@ -15,6 +15,7 @@ nnoremap ,r :<C-u>exec '!./'.expand('%:t:r')<CR>
 
 "buffer
 nnoremap gt <C-^>
+nnoremap <Space>f :set nomore<Bar>:ls<Bar>:set more<CR>:b<Space>
 
 " below line a shortcut of two line, one for plugin, one for indent
 filetype plugin indent on
@@ -42,11 +43,28 @@ set number
 set relativenumber
 set hidden
 
+" func! Run_lines_as_shell_cmd(lno, n) abort
+"     let cmd = shellescape(join( getline(a:lno, a:lno + a:n - 1), "\n"),1)
+"     exec "!bash -c ".cmd
+" endfunc
 func! Run_lines_as_shell_cmd(lno, n) abort
-    let cmd = shellescape(join( getline(a:lno, a:lno + a:n - 1), "\n"),1)
-    exec "!bash -c ".cmd
+    let first = a:lno
+    let last = a:lno + a:n - 1
+    exec first.','.last.'w!~/.tmprun'
+    exec '!cat ~/.tmprun && echo && bash ~/.tmprun'
 endfunc
 nnoremap qr :<C-u>call Run_lines_as_shell_cmd(line('.'),v:count1)<CR>
+
+command! -range R exec join(getline(<line1>,<line2>),"\n")
+func! Run_lines_as_vimscript() range abort
+    " the problem & advantage is run in func scope, global variable not affected.
+    exec join(getline(a:firstline, a:lastline),"\n")
+endfunc
+
+nnoremap <silent> <space>r :call Run_lines_as_vimscript()<CR>
+vnoremap <silent> <space>r :call Run_lines_as_vimscript()<CR>
+vnoremap <F2> :<c-u>exec join(getline("'<","'>"),"\n")<CR>
+nnoremap <silent> <F2> :<C-u> exec v:count1 == 1 ? getline('.') : join(getline('.',line('.')+(v:count1-1)), "\n") <CR>
 
 execute pathogen#infect()
 
@@ -83,3 +101,7 @@ nnoremap ,t :CtrlPTag<CR>
 nnoremap ,, :CtrlPLastMode --dir<CR>
 
 set ff=unix
+
+colorscheme evening
+inoremap <C-j> <down>
+inoremap <C-k> <up>
